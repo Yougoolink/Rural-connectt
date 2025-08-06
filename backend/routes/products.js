@@ -1,7 +1,7 @@
 // Get all products with optional filtering
 router.get('/', async (req, res) => {
   try {
-    const { category, search, inStock, limit = 50, page = 1 } = req.query;
+    const { category, search, inStock, limit = 20, page = 1, sortBy = 'name', sortOrder = 'asc' } = req.query;
     let query = {};
 
     // Filter by category
@@ -54,8 +54,31 @@ router.get('/category/:category', async (req, res) => {
     })
     .sort({ name: 1 })
     .limit(parseInt(limit));
+    // Pagination
+    const skip = (parseInt(page) - 1) * parseInt(limit);
     
-    res.json(products);
+    // Sorting
+    const sortOptions = {};
+    sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+
+    const products = await Product.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(parseInt(limit));
+    
+    const total = await Product.countDocuments(query);
+    const totalPages = Math.ceil(total / parseInt(limit));
+
+    res.json({
+      products,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalProducts: total,
+        hasNextPage: parseInt(page) < totalPages,
+        hasPrevPage: parseInt(page) > 1
+      }
+    });
   } catch (error) {
     console.error('Error fetching products by category:', error);
     res.status(500).json({ message: 'Failed to fetch products', error: error.message });

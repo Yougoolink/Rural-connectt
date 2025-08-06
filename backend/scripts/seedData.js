@@ -42,6 +42,46 @@
 @@ .. @@
        inStock: true,
        stockQuantity: 85
+    },
+    {
+      name: 'Shampoo',
+      description: 'Gentle shampoo for healthy hair care.',
+      price: 120,
+      category: 'household',
+      inStock: true,
+      stockQuantity: 60
+    },
+    {
+      name: 'LED Bulb (9W)',
+      description: 'Energy efficient LED bulb for home lighting.',
+      price: 95,
+      category: 'electronics',
+      inStock: true,
+      stockQuantity: 40
+    },
+    {
+      name: 'Mobile Charger',
+      description: 'Universal mobile phone charger with fast charging.',
+      price: 299,
+      category: 'electronics',
+      inStock: true,
+      stockQuantity: 25
+    },
+    {
+      name: 'Notebook Set',
+      description: 'Set of 5 ruled notebooks for students.',
+      price: 150,
+      category: 'books',
+      inStock: true,
+      stockQuantity: 50
+    },
+    {
+      name: 'Cricket Ball',
+      description: 'Leather cricket ball for outdoor sports.',
+      price: 180,
+      category: 'sports',
+      inStock: true,
+      stockQuantity: 20
      }
 +    {
 +      name: 'Shampoo',

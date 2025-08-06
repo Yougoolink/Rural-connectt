@@ -9,10 +9,32 @@
    const [searchTerm, setSearchTerm] = useState('');
 +  const [selectedCategory, setSelectedCategory] = useState('all');
 +  const [loading, setLoading] = useState(false);
-+  const [message, setMessage] = useState('');
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: '12',
+        ...(selectedCategory !== 'all' && { category: selectedCategory }),
+        ...(searchTerm && { search: searchTerm })
+      });
+      
+      const response = await axios.get(`/api/products?${params}`);
+      setProducts(response.data.products || response.data);
+      if (response.data.pagination) {
+        setTotalPages(response.data.pagination.totalPages);
+      }
+  const [totalPages, setTotalPages] = useState(1);
  
    useEffect(() => {
 @@ .. @@
+  // Refetch products when search/filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+    fetchProducts();
+  }, [searchTerm, selectedCategory]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [currentPage]);
+
    const fetchBookings = async () => {
      try {
        const token = localStorage.getItem('token');
@@ -167,12 +189,42 @@
 +                </select>
 +              </div>
              </div>
+            
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center space-x-2 mt-8">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                >
+                  Previous
+                </button>
+                
+                <span className="px-4 py-2 text-sm text-gray-700">
+                  Page {currentPage} of {totalPages}
+                </span>
+                
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                >
+                  Next
+                </button>
+              </div>
+            )}
  
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 @@ .. @@
                  <div className="border-t pt-4">
                    <div className="flex items-center justify-between mb-4">
                      <span className="text-lg font-semibold">Total: ₹{totalCartAmount}</span>
+                  <div className="mb-3">
+                    <span className="inline-block bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">
+                      {product.category}
+                    </span>
+                  </div>
                      <button
                        onClick={placeOrder}
 +                      disabled={loading || cart.length === 0}
@@ -217,8 +269,9 @@
                      <div className="mb-3">
                        {booking.items.map((item, index) => (
                          <div key={index} className="text-sm text-gray-600">
--                          {item.product.name} × {item.quantity}
+                          {item.product?.name || 'Product'} × {item.quantity} - ₹{(item.price * item.quantity).toFixed(2)}
 +                          {item.product?.name || 'Product'} × {item.quantity} - ₹{item.price * item.quantity}
                          </div>
                        ))}
                      </div>
+                      <span className="font-semibold">Total: ₹{booking.totalAmount.toFixed(2)}</span>
