@@ -25,7 +25,9 @@
 +                  }}
                  >
                    <User className="h-4 w-4" />
-                   <span>{user.name}</span>
+              
+  ]
+}     <span>{user.name}</span>
 @@ .. @@
  };
  
