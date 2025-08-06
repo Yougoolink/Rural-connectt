@@ -8,8 +8,9 @@
        ]);
        
        setServices(servicesRes.data);
--      setProducts(productsRes.data);
-+      setProducts(productsRes.data.products || productsRes.data);
+       setProducts(productsRes.data.products || productsRes.data);
        setNews(newsRes.data);
      } catch (error) {
        console.error('Error fetching data:', error);
+     }
+   };
